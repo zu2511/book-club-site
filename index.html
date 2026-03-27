@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <title>Читательский клуб</title>
 
-    <!-- Королевские шрифты -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Шрифты -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@300;400;500&display=swap"
+        rel="stylesheet">
 
-    <!-- Подключение стилей -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,7 +18,7 @@
     <header>
         <h1>Читательский клуб</h1>
         <p>Читаем глубже. Думаем шире.</p>
-        <a href="https://t.me/+FTkMwBsuXxw1ODhi" class="btn" target="_blank">
+        <a href="https://t.me/texta_magia_bot" class="btn" target="_blank">
             Вступить
         </a>
     </header>
@@ -33,12 +34,63 @@
     <section class="how">
         <h2>Как проходит месяц</h2>
         <ul>
-            <li>Выбираем книгу месяца</li>
+            <li>
+                Выбираем книгу месяца
+                <br><br>
+                <input type="text" id="bookInput" placeholder="Предложить свою книгу">
+                <button onclick="addBook()">Отправить</button>
+            </li>
             <li>Читаем по главам</li>
             <li>Глубокие обсуждения</li>
             <li>Итоговая встреча в Telegram</li>
         </ul>
     </section>
+
+
+    <!-- СКРИПТ -->
+    <script>
+        let books = JSON.parse(localStorage.getItem("books")) || [];
+
+        function renderBooks() {
+            const list = document.getElementById("bookList");
+            list.innerHTML = "";
+
+            // сортировка по голосам
+            books.sort((a, b) => b.votes - a.votes);
+
+            books.forEach((book, index) => {
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+                    ${book.name} — 👍 ${book.votes}
+                    <button onclick="vote(${index})">Голосовать</button>
+                `;
+
+                list.appendChild(li);
+            });
+        }
+
+        function addBook() {
+            const input = document.getElementById("bookInput");
+            const name = input.value.trim();
+
+            if (!name) return;
+
+            books.push({ name, votes: 0 });
+            localStorage.setItem("books", JSON.stringify(books));
+
+            input.value = "";
+            renderBooks();
+        }
+
+        function vote(index) {
+            books[index].votes++;
+            localStorage.setItem("books", JSON.stringify(books));
+            renderBooks();
+        }
+
+        renderBooks();
+    </script>
 
 </body>
 
